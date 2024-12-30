@@ -16,6 +16,7 @@ import { Model, selectModel } from "./models/select.js";
 import { intro, outro, log, note } from "@clack/prompts";
 import chalk from "chalk";
 import { terminalCommand } from "./utils/command/index.js";
+import { trailingMessages } from "./utils/text.js";
 
 async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
@@ -66,7 +67,7 @@ async function processGitChanges(files: string[]): Promise<void> {
   if (commitMessage) {
     const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
 
-    note(formattedCommitMessage);
+    note(trailingMessages(formattedCommitMessage));
 
     terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
   }
