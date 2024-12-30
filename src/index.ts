@@ -15,6 +15,7 @@ import { Model, selectModel } from "./models/select.js";
 import { intro, outro, log, note } from "@clack/prompts";
 import chalk from "chalk";
 import { terminalCommand } from "./utils/command/index.js";
+import { awaitingFnCall } from "./utils/sleep/index.js";
 
 async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
@@ -59,9 +60,10 @@ async function processGitChanges(files: string[]): Promise<void> {
 
     const combinedDiff = diffs.join("\n");
 
-    log.info("Generating Commit Message ...");
-
-    const commitMessage = await createGitCommit(combinedDiff);
+    const commitMessage = await awaitingFnCall<string | undefined>(
+      () => createGitCommit(combinedDiff),
+      `Generated commit messages for ${file_names}`
+    );
 
     if (commitMessage) {
       note(commitMessage);
@@ -79,9 +81,10 @@ async function processGitChanges(files: string[]): Promise<void> {
       const diff = gitDiffForFile(file);
 
       if (diff) {
-        log.info("Generating Commit Message ...");
-
-        const commitMessage = await createGitCommit(diff);
+        const commitMessage = await awaitingFnCall<string | undefined>(
+          () => createGitCommit(diff),
+          `Generated commit message from ${file}`
+        );
 
         if (commitMessage) {
           note(commitMessage);
