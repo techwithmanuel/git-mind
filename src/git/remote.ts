@@ -64,7 +64,7 @@ async function addRemoteRepo() {
 
 export async function pushToRemoteRepo() {
   return new Promise((resolve, reject) => {
-    exec("git push", (error) => {
+    exec("git push --set-upstream origin master", (error) => {
       if (error) reject(error);
       resolve(true);
     });
