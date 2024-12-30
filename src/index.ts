@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 import { gitDiffForFile } from "./git/changes/diff.js";
 import { checkGitStatus } from "./git/changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./git/commit.js";
@@ -43,30 +43,63 @@ async function registerKey(model: Model) {
   await registrations[model]();
 }
 
-async function processGitChanges(files: string[]) {
+async function processGitChanges(files: string[]): Promise<void> {
   if (files.length > 5) {
     console.log("More than 5 files, running git add .");
-    execSync("git add .", { stdio: "inherit" });
+    exec("git add .", (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return;
+      }
+      console.log(stdout);
+      console.error(stderr);
+    });
 
     const diffs = await Promise.all(
-      files.slice(0, 2).map(async (file) => {
-        const diff = gitDiffForFile(file);
+      files.slice(0, 2).map(async (file: string) => {
+        const diff = await gitDiffForFile(file);
         return diff ? diff : "";
       })
     );
 
     const combinedDiff = diffs.join("\n");
+
+    console.log("generating");
     const commitMessage = await createGitCommit(combinedDiff);
-    execSync(`git commit -am "${commitMessage}"`, { stdio: "inherit" });
+
+    exec(`git commit -am "${commitMessage}"`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return;
+      }
+      console.log(stdout);
+      console.error(stderr);
+    });
   } else {
     for (const file of files) {
       console.log(`Staging file: ${file}`);
-      execSync(`git add ${file}`, { stdio: "inherit" });
+      exec(`git add ${file}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(stdout);
+        console.error(stderr);
+      });
 
-      const diff = gitDiffForFile(file);
+      const diff = await gitDiffForFile(file);
       if (diff) {
+        console.log("generating");
         const commitMessage = await createGitCommit(diff);
-        execSync(`git commit -am "${commitMessage}"`, { stdio: "inherit" });
+
+        exec(`git commit -am "${commitMessage}"`, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          console.log(stdout);
+          console.error(stderr);
+        });
       }
     }
   }
