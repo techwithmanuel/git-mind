@@ -94,10 +94,14 @@ async function handleInitialPush() {
   return false;
 }
 
-async function isConnectedToRemoteRepo() {
-  return new Promise((resolve) => {
-    exec("git remote -v", (error, _, stderr) => {
-      resolve(!(error || stderr));
+async function isConnectedToRemoteRepo(): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    exec("git remote -v", (error, stdout, stderr) => {
+      if (error || stderr) {
+        reject(false); // Reject if there is an error or stderr
+      } else {
+        resolve(stdout.trim().length > 0); // Resolve true if there are remotes
+      }
     });
   });
 }
@@ -111,8 +115,6 @@ export async function verifyRemoteRepo() {
     }
 
     const hasRemote = await isConnectedToRemoteRepo();
-
-    console.log(hasRemote);
 
     if (!hasRemote) {
       await addRemoteRepo();
