@@ -65,9 +65,9 @@ async function processGitChanges(files: string[]): Promise<void> {
   const commitMessage = await createGitCommit(combinedDiff);
 
   if (commitMessage) {
-    const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+    note(commitMessage);
 
-    note(trailingMessages(formattedCommitMessage));
+    const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
 
     terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
   }
