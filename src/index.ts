@@ -13,6 +13,9 @@ import { registerGeminiAPIKey } from "./models/gemini/manage.js";
 import { getGPTAPIKey } from "./models/gpt/get-key.js";
 import { registerGPTAPIKey } from "./models/gpt/manage.js";
 import { Model, selectModel } from "./models/select.js";
+import { intro, outro, log } from "@clack/prompts";
+import chalk from "chalk";
+import { terminalCommand } from "./utils/command/index.js";
 
 async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
@@ -24,8 +27,6 @@ async function validateAPIKey(model: Model): Promise<boolean> {
   } else if (model === "gemini") {
     key = getGeminiAPIKey();
   }
-
-  console.log(key);
 
   if (!key || key.length === 0) {
     return false;
@@ -44,70 +45,68 @@ async function registerKey(model: Model) {
 }
 
 async function processGitChanges(files: string[]): Promise<void> {
-  if (files.length > 5) {
-    console.log("More than 5 files, running git add .");
-    exec("git add .", (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(stdout);
-      console.error(stderr);
-    });
+  const file_names = files.join(", ");
 
-    const diffs = await Promise.all(
-      files.slice(0, 2).map(async (file: string) => {
-        const diff = await gitDiffForFile(file);
-        return diff ? diff : "";
-      })
-    );
+  log.info(chalk.gray(`Changed Files: ${file_names}`));
 
-    const combinedDiff = diffs.join("\n");
+  log.info("More than 5 files, running git add .");
+  terminalCommand("git add .");
 
-    console.log("generating");
-    const commitMessage = await createGitCommit(combinedDiff);
+  const diffs = files.slice(0, 2).map((file: string) => {
+    const diff = gitDiffForFile(file);
+    return diff ? diff : "";
+  });
 
-    exec(`git commit -am "${commitMessage}"`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(stdout);
-      console.error(stderr);
-    });
-  } else {
-    for (const file of files) {
-      console.log(`Staging file: ${file}`);
-      exec(`git add ${file}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          return;
-        }
-        console.log(stdout);
-        console.error(stderr);
-      });
+  const combinedDiff = diffs.join("\n");
 
-      const diff = await gitDiffForFile(file);
-      if (diff) {
-        console.log("generating");
-        const commitMessage = await createGitCommit(diff);
+  log.info("Generating Commit Message ...");
 
-        exec(`git commit -am "${commitMessage}"`, (error, stdout, stderr) => {
-          if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-          }
-          console.log(stdout);
-          console.error(stderr);
-        });
-      }
-    }
+  const commitMessage = await createGitCommit(combinedDiff);
+
+  if (commitMessage) {
+    const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+
+    log.message(formattedCommitMessage);
+
+    terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
   }
 
-  await pushToRemoteRepo();
+  // if (files.length > 5) {
+
+  // } else {
+  //   for (const file of files) {
+  //     console.log(`Staging file: ${file}`);
+  //     exec(`git add ${file}`, (error, stdout, stderr) => {
+  //       if (error) {
+  //         console.error(`exec error: ${error}`);
+  //         return;
+  //       }
+
+  //     });
+
+  //     const diff = await gitDiffForFile(file);
+  //     if (diff) {
+  //       console.log("generating");
+  //       const commitMessage = await createGitCommit(diff);
+
+  //       exec(`git commit -am "${commitMessage}"`, (error, stdout, stderr) => {
+  //         if (error) {
+  //           console.error(`exec error: ${error}`);
+  //           return;
+  //         }
+  //         console.log(stdout);
+  //         console.error(stderr);
+  //       });
+  //     }
+  //   }
+  // }
+
+  // await pushToRemoteRepo();
 }
 
 async function initGitCommit() {
+  intro(chalk.gray("Git Mind Initialized 🔎 "));
+
   try {
     await verifyRemoteRepo();
     const files = checkGitStatus();
@@ -129,6 +128,8 @@ async function initGitCommit() {
     console.error("Error:", error);
     process.exit(1);
   }
+
+  outro(chalk.blue("All commits resolved 🎉"));
 }
 
 initGitCommit();

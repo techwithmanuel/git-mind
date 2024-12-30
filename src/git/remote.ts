@@ -5,6 +5,7 @@ import chalk from "chalk";
 import { exec } from "child_process";
 import { symbolResponseError } from "../utils/error/symbol.js";
 import { generalError } from "../utils/error/general.js";
+import { cancel } from "@clack/prompts";
 
 function isGitInitialized() {
   return new Promise((resolve) => {
