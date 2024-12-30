@@ -50,59 +50,53 @@ async function processGitChanges(files: string[]): Promise<void> {
 
   log.info(chalk.gray(`Changed Files: ${file_names}`));
 
-  log.info("More than 5 files, running git add .");
-  terminalCommand("git add .");
+  if (files.length > 5) {
+    log.info("More than 5 files, running git add .");
+    terminalCommand("git add .");
 
-  const diffs = files.slice(0, 2).map((file: string) => {
-    const diff = gitDiffForFile(file);
-    return diff ? diff : "";
-  });
+    const diffs = files.slice(0, 2).map((file: string) => {
+      const diff = gitDiffForFile(file);
+      return diff ? diff : "";
+    });
 
-  const combinedDiff = diffs.join("\n");
+    const combinedDiff = diffs.join("\n");
 
-  log.info("Generating Commit Message ...");
+    log.info("Generating Commit Message ...");
 
-  const commitMessage = await createGitCommit(combinedDiff);
+    const commitMessage = await createGitCommit(combinedDiff);
 
-  if (commitMessage) {
-    note(commitMessage);
+    if (commitMessage) {
+      note(commitMessage);
 
-    const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+      const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
 
-    terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
+      terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
+    }
+  } else {
+    for (const file of files) {
+      log.info(`Staging file: ${file}`);
+
+      terminalCommand(`git add ${file}`);
+
+      const diff = gitDiffForFile(file);
+
+      if (diff) {
+        log.info("Generating Commit Message ...");
+
+        const commitMessage = await createGitCommit(diff);
+
+        if (commitMessage) {
+          note(commitMessage);
+
+          const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+
+          terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
+        }
+      }
+    }
   }
 
-  // if (files.length > 5) {
-
-  // } else {
-  //   for (const file of files) {
-  //     console.log(`Staging file: ${file}`);
-  //     exec(`git add ${file}`, (error, stdout, stderr) => {
-  //       if (error) {
-  //         console.error(`exec error: ${error}`);
-  //         return;
-  //       }
-
-  //     });
-
-  //     const diff = await gitDiffForFile(file);
-  //     if (diff) {
-  //       console.log("generating");
-  //       const commitMessage = await createGitCommit(diff);
-
-  //       exec(`git commit -am "${commitMessage}"`, (error, stdout, stderr) => {
-  //         if (error) {
-  //           console.error(`exec error: ${error}`);
-  //           return;
-  //         }
-  //         console.log(stdout);
-  //         console.error(stderr);
-  //       });
-  //     }
-  //   }
-  // }
-
-  // await pushToRemoteRepo();
+  await pushToRemoteRepo();
 }
 
 async function initGitCommit() {
