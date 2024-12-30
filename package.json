@@ -26,6 +26,7 @@
     "@clack/prompts": "^0.9.0",
     "@google/generative-ai": "^0.21.0",
     "chalk": "^5.4.1",
-    "chatgpt": "^5.2.5"
+    "chatgpt": "^5.2.5",
+    "commander": "^13.0.0"
   }
 }
