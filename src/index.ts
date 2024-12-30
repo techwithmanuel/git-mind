@@ -13,7 +13,7 @@ import { registerGeminiAPIKey } from "./models/gemini/manage.js";
 import { getGPTAPIKey } from "./models/gpt/get-key.js";
 import { registerGPTAPIKey } from "./models/gpt/manage.js";
 import { Model, selectModel } from "./models/select.js";
-import { intro, outro, log } from "@clack/prompts";
+import { intro, outro, log, note } from "@clack/prompts";
 import chalk from "chalk";
 import { terminalCommand } from "./utils/command/index.js";
 
@@ -66,7 +66,7 @@ async function processGitChanges(files: string[]): Promise<void> {
   if (commitMessage) {
     const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
 
-    log.message(formattedCommitMessage);
+    note(formattedCommitMessage);
 
     terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
   }
