@@ -17,7 +17,7 @@ function isGitInitialized() {
 async function initializeGit() {
   return new Promise((resolve, reject) => {
     exec(
-      "git init; git add .; git commit -m 'chore: initial commit'",
+      "git init; git add .; git commit -m 'chore: initial commit'; git push --set-upstream origin master",
       (error) => {
         if (error) reject(error);
         resolve(true);
@@ -64,7 +64,7 @@ async function addRemoteRepo() {
 
 export async function pushToRemoteRepo() {
   return new Promise((resolve, reject) => {
-    exec("git push --set-upstream origin master", (error) => {
+    exec("git push", (error) => {
       if (error) reject(error);
       resolve(true);
     });
