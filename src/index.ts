@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
-import { exec, execSync } from "child_process";
 import { gitDiffForFile } from "./git/changes/diff.js";
 import { checkGitStatus } from "./git/changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./git/commit.js";
@@ -16,7 +15,6 @@ import { Model, selectModel } from "./models/select.js";
 import { intro, outro, log, note } from "@clack/prompts";
 import chalk from "chalk";
 import { terminalCommand } from "./utils/command/index.js";
-import { trailingMessages } from "./utils/text.js";
 
 async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
