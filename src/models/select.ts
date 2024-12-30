@@ -49,5 +49,3 @@ export async function selectModel() {
     cancel("Operation cancelled");
   }
 }
-
-selectModel();

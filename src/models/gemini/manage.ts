@@ -10,7 +10,7 @@ const geminiKeyFilePath = path.join(configFilePath, "gemini.txt");
 
 type ACTIONS = "register" | "delete" | "update";
 
-async function registerGeminiAPIKey() {
+export async function registerGeminiAPIKey() {
   const API_KEY = await text({
     message: "Enter your Gemini API Key:",
   });
@@ -98,5 +98,3 @@ export async function manageGeminiAPIKey() {
     cancel(chalk.bgHex("#d96570")("No option selected"));
   }
 }
-
-manageGeminiAPIKey();

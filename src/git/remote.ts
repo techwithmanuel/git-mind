@@ -6,113 +6,117 @@ import { exec } from "child_process";
 import { symbolResponseError } from "../utils/error/symbol.js";
 import { generalError } from "../utils/error/general.js";
 
+function isGitInitialized() {
+  return new Promise((resolve) => {
+    exec("git rev-parse --is-inside-work-tree", (error) => {
+      resolve(!error);
+    });
+  });
+}
+
+async function initializeGit() {
+  return new Promise((resolve, reject) => {
+    exec(
+      "git init; git add .; git commit -m 'chore: initial commit'",
+      (error) => {
+        if (error) reject(error);
+        resolve(true);
+      }
+    );
+  });
+}
+
 async function addRemoteRepo() {
   intro(
     chalk.cyanBright(
-      "No remote repository found. Please create a new repository on GitHub and then provide the necessary details to connect it."
+      "No remote repository found. Please create a new repository on GitHub and provide the connection details."
     )
-  );
-
-  exec(
-    " git init; git add .; git commit -m 'chore: initial commit' ",
-    (error) => {
-      if (error) {
-        generalError(
-          "An error occured while pushing to your remote repo: " + error
-        );
-      }
-    }
   );
 
   const username = await text({
     message: "What is your Github username:",
   });
-
   symbolResponseError(username);
 
   const repository = await text({
     message: "What is the name of your repository:",
   });
-
   symbolResponseError(repository);
 
-  const remoteRepoURL = `https://github.com/${String(
-    username.toString()
-  )}/${String(repository.toString())}.git`;
+  const remoteRepoURL = `https://github.com/${String(username)}/${String(
+    repository
+  )}.git`;
 
   const confirmedRemoteURL = await text({
-    message: "Is this URL correct ?",
+    message: "Is this URL correct?",
     initialValue: remoteRepoURL,
     defaultValue: remoteRepoURL,
   });
-
   symbolResponseError(confirmedRemoteURL);
 
-  exec(`git remote add origin ${confirmedRemoteURL.toString()}`, (error) => {
-    if (error) {
-      generalError("An error occured while connecting to remote repo" + error);
-    }
-  });
-
-  const shouldMerge = await confirm({
-    message: "Would you like to push to your remote repo ?",
-  });
-
-  if (Boolean(shouldMerge) === true) {
-    const gitPushCommand = await text({
-      message: "Is this command correct ?",
-      initialValue: "git push -u origin master",
-      defaultValue: "git push -u origin master",
+  return new Promise((resolve, reject) => {
+    exec(`git remote add origin ${confirmedRemoteURL.toString()}`, (error) => {
+      if (error) reject(error);
+      resolve(true);
     });
-
-    symbolResponseError(gitPushCommand);
-
-    exec(String(gitPushCommand.toString()), (error) => {
-      if (error) {
-        generalError(
-          "An error occured while pushing to your remote repo: " + error
-        );
-      }
-    });
-
-    outro(chalk.green("Updates pushed succesfully"));
-  } else {
-    generalError();
-  }
+  });
 }
 
 export async function pushToRemoteRepo() {
-  exec(String("git push"), (error) => {
-    if (error) {
-      generalError(
-        "An error occured while pushing to your remote repo: " + error
-      );
-    }
+  return new Promise((resolve, reject) => {
+    exec("git push", (error) => {
+      if (error) reject(error);
+      resolve(true);
+    });
+  });
+}
+
+async function handleInitialPush() {
+  const shouldMerge = await confirm({
+    message: "Would you like to push to your remote repo?",
   });
 
-  outro(chalk.green("Updates pushed succesfully"));
+  if (shouldMerge) {
+    const gitPushCommand = await text({
+      message: "Is this command correct?",
+      initialValue: "git push -u origin master",
+      defaultValue: "git push -u origin master",
+    });
+    symbolResponseError(gitPushCommand);
+
+    return new Promise((resolve, reject) => {
+      exec(String(gitPushCommand), (error) => {
+        if (error) reject(error);
+        resolve(true);
+      });
+    });
+  }
+  return false;
+}
+
+async function isConnectedToRemoteRepo() {
+  return new Promise((resolve) => {
+    exec("git remote -v", (error, _, stderr) => {
+      resolve(!(error || stderr));
+    });
+  });
 }
 
 export async function verifyRemoteRepo() {
-  intro(chalk.grey("Analyzing Repository ..."));
+  try {
+    const isInitialized = await isGitInitialized();
 
-  const isConnectedToRemoteRepo = () => {
-    return new Promise((resolve, _) => {
-      exec("git remote -v", (error, _, stderr) => {
-        if (error || stderr) {
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      });
-    });
-  };
-
-  isConnectedToRemoteRepo().then((isConnected) => {
-    if (!isConnected) {
-      addRemoteRepo();
+    if (!isInitialized) {
+      await initializeGit();
     }
-  });
-}
 
-verifyRemoteRepo();
+    const hasRemote = await isConnectedToRemoteRepo();
+    if (!hasRemote) {
+      await addRemoteRepo();
+      await handleInitialPush();
+      outro(chalk.green("Repository setup completed successfully"));
+    }
+  } catch (error) {
+    generalError("An error occurred: " + error);
+  }
+}

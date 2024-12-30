@@ -18,11 +18,14 @@ export async function createGitCommit(diff: string) {
     const preferredModel: Model = preferences;
     try {
       if (preferredModel === "claude") {
-        generateClaudeCommit(diff);
+        const message = await generateClaudeCommit(diff);
+        return message;
       } else if (preferredModel === "gemini") {
-        generateGeminiCommit(diff);
+        const message = await generateGeminiCommit(diff);
+        return message;
       } else if (preferredModel === "gpt") {
-        generateGeminiCommit(diff);
+        const message = await generateGeminiCommit(diff);
+        return message;
       } else {
         generalError("An error occured, please try again");
       }
@@ -33,5 +36,22 @@ export async function createGitCommit(diff: string) {
     }
   } else {
     selectModel();
+  }
+}
+
+export async function hasPreferredModel() {
+  if (fs.existsSync(preferencesFilePath)) {
+    const preferences: any = fs
+      .readFileSync(preferencesFilePath, "utf-8")
+      .trim();
+    const preferredModel: Model = preferences;
+
+    if (preferredModel) {
+      return preferredModel;
+    }
+
+    return undefined;
+  } else {
+    return undefined;
   }
 }

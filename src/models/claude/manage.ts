@@ -10,7 +10,7 @@ export const claudeKeyFilePath = path.join(configFilePath, "claude.txt");
 
 type ACTIONS = "register" | "delete" | "update";
 
-async function registerClaudeAPIKey() {
+export async function registerClaudeAPIKey() {
   const API_KEY = await text({
     message: "Enter your Anthropic (Claude) API Key:",
   });
@@ -70,7 +70,7 @@ async function updateClaudeAPIKey() {
   }
 }
 
-async function manageClaudeAPIKey() {
+export async function manageClaudeAPIKey() {
   await intro(chalk.bgHex("#cc785c")("🗄️ Manage Claude"));
 
   const option: any = await select({
@@ -100,5 +100,3 @@ async function manageClaudeAPIKey() {
     cancel(chalk.bgHex("#cc785c")("No option selected"));
   }
 }
-
-manageClaudeAPIKey();

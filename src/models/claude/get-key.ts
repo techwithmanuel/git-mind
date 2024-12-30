@@ -21,5 +21,3 @@ export function getClaudeAPIKey() {
     console.log(chalk.red("Unable to find Anthropic (Claude) API Key"));
   }
 }
-
-getClaudeAPIKey();

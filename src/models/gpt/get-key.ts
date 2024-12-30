@@ -19,5 +19,3 @@ export function getGPTAPIKey() {
     console.log(chalk.red("Unable to find OpenAI Key"));
   }
 }
-
-getGPTAPIKey();

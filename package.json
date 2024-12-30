@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "npx ts-node src/index.ts"
+    "dev": "tsc --watch"
   },
   "bin": {
     "git-mind": "dist/index.js",
@@ -18,16 +18,14 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@types/node": "^22.9.0",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.6.3"
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
-    "@clack/prompts": "^0.7.0",
+    "@anthropic-ai/sdk": "^0.33.1",
+    "@clack/prompts": "^0.9.0",
     "@google/generative-ai": "^0.21.0",
-    "chalk": "^5.3.0",
+    "chalk": "^5.4.1",
     "chatgpt": "^5.2.5"
   }
 }

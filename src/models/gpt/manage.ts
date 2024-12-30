@@ -10,7 +10,7 @@ export const gptKeyFilePath = path.join(configFilePath, "open-ai.txt");
 
 type ACTIONS = "register" | "delete" | "update";
 
-async function registerGPTAPIKey() {
+export async function registerGPTAPIKey() {
   const API_KEY = await text({
     message: "Enter your OpenAI API Key:",
   });
@@ -98,5 +98,3 @@ export async function manageGPTAPIKey() {
     cancel(chalk.white.inverse("No action selected"));
   }
 }
-
-manageGPTAPIKey();
