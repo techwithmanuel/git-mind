@@ -89,7 +89,7 @@ export async function verifyRemoteRepo() {
             await initializeGit();
         }
         const hasRemote = await isConnectedToRemoteRepo();
-        console.log;
+        console.log(hasRemote);
         if (!hasRemote) {
             await addRemoteRepo();
             await handleInitialPush();

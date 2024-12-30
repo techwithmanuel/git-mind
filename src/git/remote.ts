@@ -112,7 +112,7 @@ export async function verifyRemoteRepo() {
 
     const hasRemote = await isConnectedToRemoteRepo();
 
-    console.log;
+    console.log(hasRemote);
 
     if (!hasRemote) {
       await addRemoteRepo();
