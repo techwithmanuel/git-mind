@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
-import fs from "fs";
-import path from "path";
 import { gitDiffForFile } from "./changes/diff.js";
 import { checkGitStatus } from "./changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./commit.js";
@@ -47,20 +45,10 @@ export async function registerKey(model: Model) {
   await registrations[model]();
 }
 
-async function removeGitLockFile(gitLockFilePath: string): Promise<void> {
-  if (fs.existsSync(gitLockFilePath)) {
-    fs.unlinkSync(gitLockFilePath);
-  }
-}
-
 async function processGitChanges(files: string[]): Promise<void> {
   const file_names = files.join(", ");
 
   log.info(chalk.gray(`Changed Files: ${file_names}`));
-
-  const gitLockFilePath = path.join(process.cwd(), ".git", "index.lock");
-
-  await removeGitLockFile(gitLockFilePath);
 
   if (files.length >= 5) {
     log.info("More than 5 files, running git add .");
@@ -121,7 +109,6 @@ async function processGitChanges(files: string[]): Promise<void> {
 
           note(trailingMessages(formattedCommitMessage));
 
-          await removeGitLockFile(gitLockFilePath);
           terminalCommand(`git commit -m "${formattedCommitMessage}"`);
           log.info(`Successfully committed changes for: ${file}`);
         }
@@ -129,7 +116,7 @@ async function processGitChanges(files: string[]): Promise<void> {
         failures.push({ file, error: error as Error });
         log.error(`Failed to process file: ${file}` + error);
 
-        await removeGitLockFile(gitLockFilePath);
+        terminalCommand("rm -f .git/index.lock");
         terminalCommand(`git reset "${file}"`);
       }
     }
