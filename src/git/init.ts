@@ -73,28 +73,51 @@ async function processGitChanges(files: string[]): Promise<void> {
       terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
     }
   } else {
-    for (const file of files) {
-      log.info(`Staging file: ${file}`);
+    const queue = files.slice();
+    const failures: Array<{ file: string; error: Error }> = [];
 
-      terminalCommand(`git add ${file}`);
+    try {
+      // Process files sequentially
+      while (queue.length > 0) {
+        const file = queue.shift()!;
 
-      const diff = gitDiffForFile(file);
+        try {
+          log.info(`Staging file: ${file}`);
 
-      if (diff) {
-        const commitMessage = await awaitingFnCall<string | undefined>(
-          () => createGitCommit(diff),
-          `Generated commit message from ${file}`
-        );
+          terminalCommand(`git add "${file}"`);
 
-        if (commitMessage) {
-          note(commitMessage);
+          const diff = gitDiffForFile(file);
 
-          const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+          if (!diff) {
+            log.info(`No changes detected for file: ${file}`);
+            continue;
+          }
 
-          terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
+          const commitMessage = await awaitingFnCall<string | undefined>(
+            () => createGitCommit(diff),
+            `Generated commit message from ${file}`
+          );
+
+          if (!commitMessage) {
+            log.warn(
+              `No commit message generated for file: ${file}, skipping commit`
+            );
+            continue;
+          } else {
+            const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+            note(formattedCommitMessage);
+
+            terminalCommand(`git commit -m "${formattedCommitMessage}"`);
+            log.info(`Successfully committed changes for: ${file}`);
+          }
+        } catch (error) {
+          failures.push({ file, error: error as Error });
+          log.error(`Failed to process file: ${file}` + error);
+
+          terminalCommand(`git reset "${file}"`);
         }
       }
-    }
+    } catch (err) {}
   }
 
   await pushToRemoteRepo();
