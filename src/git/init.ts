@@ -4,7 +4,7 @@ process.noDeprecation = true;
 import { gitDiffForFile } from "./changes/diff.js";
 import { checkGitStatus } from "./changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./commit.js";
-import { verifyRemoteRepo, pushToRemoteRepo } from "./remote.js";
+import { verifyRemoteRepo } from "./remote.js";
 import { getClaudeAPIKey } from "../models/claude/get-key.js";
 import { registerClaudeAPIKey } from "../models/claude/manage.js";
 import { getGeminiAPIKey } from "../models/gemini/get-key.js";
@@ -73,10 +73,8 @@ async function processGitChanges(files: string[]): Promise<void> {
         .replace(/\n/g, " ")
         .replace(/"/g, "'");
 
-      terminalCommand(`git commit -m "${formattedCommitMessage}" `);
+      terminalCommand(`git commit -m "${formattedCommitMessage}"; git push `);
     }
-
-    await pushToRemoteRepo();
   } else {
     const failures: Array<{ file: string; error: Error }> = [];
 

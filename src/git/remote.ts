@@ -63,15 +63,6 @@ async function addRemoteRepo() {
   });
 }
 
-export async function pushToRemoteRepo() {
-  return new Promise((resolve, reject) => {
-    exec("git push", (error) => {
-      if (error) reject(error);
-      resolve(true);
-    });
-  });
-}
-
 async function handleInitialPush() {
   const shouldMerge = await confirm({
     message: "Would you like to push to your remote repo?",
