@@ -47,6 +47,12 @@ export async function registerKey(model: Model) {
   await registrations[model]();
 }
 
+async function removeGitLockFile(gitLockFilePath: string): Promise<void> {
+  if (fs.existsSync(gitLockFilePath)) {
+    fs.unlinkSync(gitLockFilePath);
+  }
+}
+
 async function processGitChanges(files: string[]): Promise<void> {
   const file_names = files.join(", ");
 
@@ -54,9 +60,7 @@ async function processGitChanges(files: string[]): Promise<void> {
 
   const gitLockFilePath = path.join(process.cwd(), ".git", "index.lock");
 
-  if (fs.existsSync(gitLockFilePath)) {
-    fs.unlinkSync(gitLockFilePath);
-  }
+  await removeGitLockFile(gitLockFilePath);
 
   if (files.length >= 5) {
     log.info("More than 5 files, running git add .");
@@ -90,10 +94,7 @@ async function processGitChanges(files: string[]): Promise<void> {
       try {
         log.info(`Staging file: ${file}`);
 
-        if (fs.existsSync(gitLockFilePath)) {
-          fs.unlinkSync(gitLockFilePath);
-        }
-
+        terminalCommand("rm -f .git/index.lock");
         terminalCommand(`git add "${file}"`);
 
         const diff = gitDiffForFile(file);
@@ -120,6 +121,7 @@ async function processGitChanges(files: string[]): Promise<void> {
 
           note(trailingMessages(formattedCommitMessage));
 
+          await removeGitLockFile(gitLockFilePath);
           terminalCommand(`git commit -m "${formattedCommitMessage}"`);
           log.info(`Successfully committed changes for: ${file}`);
         }
@@ -127,6 +129,7 @@ async function processGitChanges(files: string[]): Promise<void> {
         failures.push({ file, error: error as Error });
         log.error(`Failed to process file: ${file}` + error);
 
+        await removeGitLockFile(gitLockFilePath);
         terminalCommand(`git reset "${file}"`);
       }
     }
