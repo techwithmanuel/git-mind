@@ -67,7 +67,7 @@ async function processGitChanges(files: string[]): Promise<void> {
     );
 
     if (commitMessage) {
-      note(commitMessage);
+      log.message(trailingMessages(commitMessage));
 
       const formattedCommitMessage = commitMessage.replace(/\n/g, ", ");
 
