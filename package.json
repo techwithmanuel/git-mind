@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "vitepress dev docs --port=4000",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
@@ -28,6 +28,7 @@
     "chalk": "^5.4.1",
     "chatgpt": "^5.2.5",
     "commander": "^13.0.0",
-    "vitepress": "^1.5.0"
+    "vitepress": "^1.5.0",
+    "vue-tweet": "^2.3.1"
   }
 }
