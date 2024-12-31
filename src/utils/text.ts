@@ -1,7 +1,5 @@
 export function trailingMessages(message: string) {
-  if (message.length >= 100) {
-    return `${message.slice(0, 95)} ...`;
-  }
+  const cleanMessage = message.trim().replace(/\s+/g, " ").replace(/\n/g, ", ");
 
-  return message;
+  return cleanMessage;
 }
