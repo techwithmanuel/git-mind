@@ -73,6 +73,7 @@ async function processGitChanges(files: string[]): Promise<void> {
         .replace(/\n/g, " ")
         .replace(/"/g, "'");
 
+      terminalCommand("rm -f .git/index.lock");
       terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
     }
   } else {

@@ -5,8 +5,8 @@ export function trailingMessages(message: string) {
     .replace(/\n/g, ", ")
     .replace(/"/g, "'");
 
-  if (cleanMessage.length > 100) {
-    const slicedMessage = cleanMessage.slice(0, 95);
+  if (cleanMessage.length > 125) {
+    const slicedMessage = cleanMessage.slice(0, 125);
     return `${slicedMessage} ...`;
   }
 
