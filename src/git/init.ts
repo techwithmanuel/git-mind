@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
+import fs from "fs";
+import path from "path";
 import { gitDiffForFile } from "./changes/diff.js";
 import { checkGitStatus } from "./changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./commit.js";
@@ -45,8 +47,18 @@ export async function registerKey(model: Model) {
   await registrations[model]();
 }
 
+async function checkGitLock(): Promise<boolean> {
+  const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
+  if (fs.existsSync(lockFilePath)) {
+    log.warn(
+      "Lock file detected: .git/index.lock. Git process might be running or was interrupted."
+    );
+    return true;
+  }
+  return false;
+}
+
 async function processGitChanges(files: string[]): Promise<void> {
-  terminalCommand("rm -f .git/index.lock");
   const file_names = files.join(", ");
 
   log.info(chalk.gray(`Changed Files: ${file_names}`));
@@ -79,8 +91,12 @@ async function processGitChanges(files: string[]): Promise<void> {
   } else {
     const failures: Array<{ file: string; error: Error }> = [];
 
-    // Process files one at a time
     for (const file of files) {
+      const hasGitLock = await checkGitLock();
+      if (hasGitLock) {
+        terminalCommand("rm -f .git/index.lock");
+      }
+
       try {
         log.info(`Staging file: ${file}`);
         terminalCommand(`git add "${file}"`);
@@ -116,14 +132,13 @@ async function processGitChanges(files: string[]): Promise<void> {
         failures.push({ file, error: error as Error });
         log.error(`Failed to process file: ${file}` + error);
 
-        terminalCommand("rm -f .git/index.lock");
         terminalCommand(`git reset "${file}"`);
       }
     }
-  }
 
-  terminalCommand("rm -f .git/index.lock");
-  await pushToRemoteRepo();
+    await pushToRemoteRepo();
+    terminalCommand("rm -f .git/index.lock");
+  }
 }
 
 export async function initGitCommit() {
