@@ -73,17 +73,15 @@ async function processGitChanges(files: string[]): Promise<void> {
         .replace(/\n/g, " ")
         .replace(/"/g, "'");
 
-      terminalCommand("rm -f .git/index.lock");
       terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
     }
   } else {
     const failures: Array<{ file: string; error: Error }> = [];
 
+    // Process files one at a time
     for (const file of files) {
       try {
         log.info(`Staging file: ${file}`);
-
-        terminalCommand("rm -f .git/index.lock");
         terminalCommand(`git add "${file}"`);
 
         const diff = gitDiffForFile(file);
