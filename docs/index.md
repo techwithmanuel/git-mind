@@ -6,7 +6,7 @@ hero:
   text: Writing Git Commits
   tagline: AI-Powered Git Commit Message Generator with Multi-Model Support
   image:
-    src: /hero.svg
+    src: /hero.png
     alt: Hero
 
   actions:
