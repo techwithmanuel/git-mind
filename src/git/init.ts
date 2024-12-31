@@ -49,7 +49,7 @@ async function processGitChanges(files: string[]): Promise<void> {
 
   log.info(chalk.gray(`Changed Files: ${file_names}`));
 
-  if (files.length > 5) {
+  if (files.length >= 5) {
     log.info("More than 5 files, running git add .");
     terminalCommand("git add .");
 

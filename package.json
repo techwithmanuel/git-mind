@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "bin": {
-    "git-mind": "dist/index.js",
-    "git-mind manage-gemini": "dist/models/gemini/manage.js",
-    "git-mind manage-claude": "dist/models/claude/manage.js",
-    "git-mind manage-gpt": "dist/models/gpt/manage.js"
+    "git-mind": "dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
     "@google/generative-ai": "^0.21.0",
     "chalk": "^5.4.1",
     "chatgpt": "^5.2.5",
-    "commander": "^13.0.0"
+    "commander": "^13.0.0",
+    "vitepress": "^1.5.0"
   }
 }
