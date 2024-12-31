@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="100" height="100" alt="Motion logo" src="./docs/public/logo.svg" />
+  <img width="100" height="100" alt="Motion logo" src="https://git-mind.vercel.app/logo.svg" />
 </p>
 <h1 align="center">Git Mind</h1>
 <h3 align="center">
