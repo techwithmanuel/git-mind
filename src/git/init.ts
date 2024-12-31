@@ -75,12 +75,12 @@ async function processGitChanges(files: string[]): Promise<void> {
 
       terminalCommand(`git commit -m "${formattedCommitMessage}" `);
     }
+
+    await pushToRemoteRepo();
   } else {
     const failures: Array<{ file: string; error: Error }> = [];
 
     for (const file of files) {
-      terminalCommand("rm -f .git/index.lock");
-
       try {
         log.info(`Staging file: ${file}`);
         terminalCommand(`git add "${file}"`);
@@ -111,6 +111,8 @@ async function processGitChanges(files: string[]): Promise<void> {
 
           terminalCommand(`git commit -m "${formattedCommitMessage}"`);
           log.info(`Successfully committed changes for: ${file}`);
+
+          await awaitingFnCall(() => pushToRemoteRepo());
         }
       } catch (error) {
         failures.push({ file, error: error as Error });
@@ -119,8 +121,6 @@ async function processGitChanges(files: string[]): Promise<void> {
         terminalCommand(`git reset "${file}"`);
       }
     }
-
-    await pushToRemoteRepo();
   }
 }
 
