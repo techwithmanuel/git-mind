@@ -106,7 +106,7 @@ async function processGitChanges(files: string[]): Promise<void> {
           } else {
             const formattedCommitMessage = commitMessage.replace(/\n/g, ", ");
 
-            log.message(formattedCommitMessage);
+            log.message(trailingMessages(formattedCommitMessage));
 
             terminalCommand(`git commit -m "${formattedCommitMessage}"`);
             log.info(`Successfully committed changes for: ${file}`);
