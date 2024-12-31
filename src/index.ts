@@ -6,6 +6,7 @@ import { initGitCommit } from "./git/init.js";
 import { manageGeminiAPIKey } from "./models/gemini/manage.js";
 import { manageClaudeAPIKey } from "./models/claude/manage.js";
 import { manageGPTAPIKey } from "./models/gpt/manage.js";
+import { askPreferredModel } from "./git/ask.js";
 
 const program = new Command();
 
@@ -35,5 +36,10 @@ program
   .command("manage-gpt")
   .description("Manage the GPT model")
   .action(manageGPTAPIKey);
+
+program
+  .command("ask")
+  .description("Ask Git Related Questions")
+  .action(askPreferredModel);
 
 program.parse(process.argv);

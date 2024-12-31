@@ -17,7 +17,7 @@ import chalk from "chalk";
 import { terminalCommand } from "../utils/command/index.js";
 import { awaitingFnCall } from "../utils/sleep/index.js";
 
-async function validateAPIKey(model: Model): Promise<boolean> {
+export async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
 
   if (model === "claude") {
@@ -35,7 +35,7 @@ async function validateAPIKey(model: Model): Promise<boolean> {
   return true;
 }
 
-async function registerKey(model: Model) {
+export async function registerKey(model: Model) {
   const registrations = {
     claude: registerClaudeAPIKey,
     gpt: registerGPTAPIKey,

@@ -27,3 +27,5 @@ Provide context for the change (e.g., Added a null check to prevent crashes from
 Footer (Optional)
 Note breaking changes or issues (e.g., BREAKING CHANGE: email is required for user creation API).
 `;
+
+export const answerPrompt = `Respond exclusively with Git commands. If the question requires anything that is not a Git command or involves actions outside of Git, reply with the exact phrase: 'Unable to get the correct git command(s) for that.' Do not provide explanations, clarifications, or additional information outside of Git commands. Your response should strictly focus on providing valid Git commands for the given task. Any request that doesn't directly involve Git or requires tools outside of Git must be met with the specified phrase, be sure to write the complete command always`;
