@@ -12,7 +12,7 @@ import { registerGeminiAPIKey } from "../models/gemini/manage.js";
 import { getGPTAPIKey } from "../models/gpt/get-key.js";
 import { registerGPTAPIKey } from "../models/gpt/manage.js";
 import { Model, selectModel } from "../models/select.js";
-import { intro, outro, log, note, cancel } from "@clack/prompts";
+import { intro, outro, log, note } from "@clack/prompts";
 import chalk from "chalk";
 import { terminalCommand } from "../utils/command/index.js";
 import { awaitingFnCall } from "../utils/sleep/index.js";
