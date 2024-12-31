@@ -60,7 +60,6 @@ async function checkGitLock(): Promise<boolean> {
 }
 
 async function removeGitLock(): Promise<void> {
-  terminalCommand("rm -f .git/index.lock");
   const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
   if (fs.existsSync(lockFilePath)) {
     log.info("Removing .git/index.lock file.");
