@@ -6,6 +6,7 @@ export function terminalCommand(command: string) {
     if (error) {
       const { message } = error;
       generalError(message);
+      exec("git reset");
     }
   });
 }
