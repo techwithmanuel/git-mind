@@ -53,9 +53,19 @@ async function checkGitLock(): Promise<boolean> {
     log.warn(
       "Lock file detected: .git/index.lock. Git process might be running or was interrupted."
     );
+    note("If you see a command error, try running `rm -f .git/index.lock`");
     return true;
   }
   return false;
+}
+
+async function removeGitLock(): Promise<void> {
+  terminalCommand("rm -f .git/index.lock");
+  const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
+  if (fs.existsSync(lockFilePath)) {
+    log.info("Removing .git/index.lock file.");
+    fs.unlinkSync(lockFilePath);
+  }
 }
 
 async function processGitChanges(files: string[]): Promise<void> {
@@ -94,7 +104,7 @@ async function processGitChanges(files: string[]): Promise<void> {
     for (const file of files) {
       const hasGitLock = await checkGitLock();
       if (hasGitLock) {
-        terminalCommand("rm -f .git/index.lock");
+        await removeGitLock();
       }
 
       try {
