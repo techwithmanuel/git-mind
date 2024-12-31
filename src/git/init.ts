@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
+import fs from "fs";
+import path from "path";
 import { gitDiffForFile } from "./changes/diff.js";
 import { checkGitStatus } from "./changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./commit.js";
@@ -45,8 +47,29 @@ export async function registerKey(model: Model) {
   await registrations[model]();
 }
 
+async function checkGitLock(): Promise<boolean> {
+  const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
+  if (fs.existsSync(lockFilePath)) {
+    log.warn(
+      "Lock file detected: .git/index.lock. Git process might be running or was interrupted."
+    );
+    note("If you see a command error, try running `rm -f .git/index.lock`");
+    return true;
+  }
+  return false;
+}
+
+async function removeGitLock(): Promise<void> {
+  const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
+  if (fs.existsSync(lockFilePath)) {
+    log.info("Removing .git/index.lock file.");
+    fs.unlinkSync(lockFilePath);
+  }
+}
+
 async function processGitChanges(files: string[]): Promise<void> {
   const file_names = files.join(", ");
+
   log.info(chalk.gray(`Changed Files: ${file_names}`));
 
   if (files.length >= 5) {
@@ -72,37 +95,36 @@ async function processGitChanges(files: string[]): Promise<void> {
         .replace(/\n/g, " ")
         .replace(/"/g, "'");
 
-      terminalCommand(`git commit -m "${formattedCommitMessage}"`);
+      terminalCommand(`git commit -m "${formattedCommitMessage}" `);
     }
   } else {
     const failures: Array<{ file: string; error: Error }> = [];
 
-    await Promise.allSettled(
-      files.map(async (file) => {
-        try {
-          log.info(`Staging file: ${file}`);
+    for (const file of files) {
+      terminalCommand("rm -f .git/index.lock");
 
-          terminalCommand(`git add "${file}"`);
+      try {
+        log.info(`Staging file: ${file}`);
+        terminalCommand(`git add "${file}"`);
 
-          const diff = gitDiffForFile(file);
+        const diff = gitDiffForFile(file);
 
-          if (!diff) {
-            log.info(`No changes detected for file: ${file}`);
-            return;
-          }
+        if (!diff) {
+          log.info(`No changes detected for file: ${file}`);
+          continue;
+        }
 
-          const commitMessage = await awaitingFnCall<string | undefined>(
-            () => createGitCommit(diff),
-            `Generated commit message from ${file}`
+        const commitMessage = await awaitingFnCall<string | undefined>(
+          () => createGitCommit(diff),
+          `Generated commit message from ${file}`
+        );
+
+        if (!commitMessage) {
+          log.warn(
+            `No commit message generated for file: ${file}, skipping commit`
           );
-
-          if (!commitMessage) {
-            log.warn(
-              `No commit message generated for file: ${file}, skipping commit`
-            );
-            return;
-          }
-
+          continue;
+        } else {
           const formattedCommitMessage = commitMessage
             .replace(/\n/g, " ")
             .replace(/"/g, "'");
@@ -111,18 +133,17 @@ async function processGitChanges(files: string[]): Promise<void> {
 
           terminalCommand(`git commit -m "${formattedCommitMessage}"`);
           log.info(`Successfully committed changes for: ${file}`);
-        } catch (error) {
-          failures.push({ file, error: error as Error });
-          log.error(`Failed to process file: ${file}` + error);
-
-          terminalCommand("rm -f .git/index.lock");
-          terminalCommand(`git reset "${file}"`);
         }
-      })
-    );
-  }
+      } catch (error) {
+        failures.push({ file, error: error as Error });
+        log.error(`Failed to process file: ${file}` + error);
 
-  await pushToRemoteRepo();
+        terminalCommand(`git reset "${file}"`);
+      }
+    }
+
+    await pushToRemoteRepo();
+  }
 }
 
 export async function initGitCommit() {
