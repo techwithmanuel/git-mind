@@ -109,10 +109,10 @@ async function processGitChanges(files: string[]): Promise<void> {
 
           note(trailingMessages(formattedCommitMessage));
 
-          terminalCommand(`git commit -m "${formattedCommitMessage}"`);
-          log.info(`Successfully committed changes for: ${file}`);
-
-          await awaitingFnCall(() => pushToRemoteRepo());
+          terminalCommand(
+            `git commit -m "${formattedCommitMessage}"; git push`
+          );
+          log.info(`Successfully pushed and committed changes for: ${file}`);
         }
       } catch (error) {
         failures.push({ file, error: error as Error });
