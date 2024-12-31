@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { text, outro, intro, cancel, isCancel, note } from "@clack/prompts";
 import { Model, selectModel } from "../models/select.js";
 import { hasPreferredModel } from "./commit.js";
