@@ -5,12 +5,10 @@ Follow these steps to get started with git-mind:
 ### 1. Install git-mind
 
 ```bash
+# Locally installed
 npm install -g git-mind
-```
 
-or with npx
-
-```bash
+# with npx
 npx git-mind@latest <command>
 ```
 
@@ -19,12 +17,10 @@ npx git-mind@latest <command>
 Use the init command to generate a commit message for your changes:
 
 ```bash
+# Locally installed
 git-mind init
-```
 
-Or with npx
-
-```bash
+# with npx
 npx git-mind@latest init
 ```
 
@@ -36,18 +32,19 @@ Set up API keys for the AI models you want to use:
 # For Gemini
 git-mind manage-gemini
 
+# with npx
+npx git-mind@latest manage-gemini
+
 # For Claude
 git-mind manage-claude
 
+# with npx
+npx git-mind@latest manage-claude
+
 # For GPT
 git-mind manage-gpt
-```
 
-or with npx
-
-```bash
-npx git-mind@latest manage-gemini
-npx git-mind@latest manage-claude
+# with npx
 npx git-mind@latest manage-gpt
 ```
 
@@ -56,12 +53,10 @@ npx git-mind@latest manage-gpt
 Choose the AI model you want to use by default:
 
 ```bash
+# Locally installed
 git-mind select-default
-```
 
-or with npx
-
-```bash
+# with npx
 npx git-mind@latest select-default
 ```
 
@@ -70,11 +65,9 @@ npx git-mind@latest select-default
 If you’re stuck with a git-related question, ask the AI directly:
 
 ```bash
+# Locally installed
 git-mind ask "How do I revert the last commit?"
-```
 
-or with npx
-
-```bash
+# with npx
 npx git-mind@latest ask "How do I revert the last commit?"
 ```

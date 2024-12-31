@@ -40,9 +40,9 @@ export default defineConfig({
       {
         text: "Models",
         items: [
-          { text: "Gemini", link: "/guide/models/gemini" },
-          { text: "Claude", link: "/guide/models/claude" },
+          { text: "Gemini (Preferred)", link: "/guide/models/gemini" },
           { text: "OpenAI GPT", link: "/guide/models/gpt" },
+          { text: "Claude", link: "/guide/models/claude" },
         ],
       },
       {

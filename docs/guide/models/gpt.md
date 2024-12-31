@@ -2,7 +2,7 @@
 
 To manage your GPT API key, use the following commands:
 
-Setting Your API Key
+### Setting Your API Key
 
 Run the command below to add, update, or delete your GPT API key:
 
@@ -14,7 +14,7 @@ git-mind manage-gpt
 npx git-mind@latest manage-gpt
 ```
 
-You will be presented with three options:
+### You will be presented with three options:
 
 - Add API Key: Provide your API key for GPT.
 
@@ -24,10 +24,12 @@ You will be presented with three options:
 
 ### How to Obtain a GPT API Key
 
-1. Visit [OpenAI API Portal](https://platform.openai.com/signup/).
+1. Visit [OpenAI API Portal](https://platform.openai.com/signup/)
 
 2. Complete te authentication flow; login or signup
 
-3. Create an organization and copy the API key,
+3. Create an organization
 
-4. Copy the key and use it with the `git-mind manage-gpt` command.
+4. Copy the [key](https://platform.openai.com/api-keys) and the run the `git-mind manage-gpt` command
+
+5. Select `Register API key` the paste your API key
