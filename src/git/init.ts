@@ -46,6 +46,7 @@ export async function registerKey(model: Model) {
 }
 
 async function processGitChanges(files: string[]): Promise<void> {
+  terminalCommand("rm -f .git/index.lock");
   const file_names = files.join(", ");
 
   log.info(chalk.gray(`Changed Files: ${file_names}`));
