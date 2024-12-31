@@ -1,10 +1,14 @@
-import { generalError } from "./general.js";
+#!/usr/bin/env node
+
+import { cancel, isCancel } from "@clack/prompts";
+import { safeExit } from "./general.js";
 
 export function symbolResponseError(
   value: string | symbol,
-  message = "Operation cancelled"
+  message = "Operation cancelled. "
 ) {
-  if (value.toString().includes("clack:cancel")) {
-    generalError(message);
+  if (isCancel(value)) {
+    cancel(message);
+    safeExit(1);
   }
 }

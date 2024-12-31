@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { cancel } from "@clack/prompts";
 import chalk from "chalk";
 

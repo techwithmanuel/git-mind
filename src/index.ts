@@ -7,6 +7,7 @@ import { manageGeminiAPIKey } from "./models/gemini/manage.js";
 import { manageClaudeAPIKey } from "./models/claude/manage.js";
 import { manageGPTAPIKey } from "./models/gpt/manage.js";
 import { askPreferredModel } from "./git/ask.js";
+import { selectModel } from "./models/select.js";
 
 const program = new Command();
 
@@ -36,6 +37,11 @@ program
   .command("manage-gpt")
   .description("Manage the GPT model")
   .action(manageGPTAPIKey);
+
+program
+  .command("select-default")
+  .description("Select Deafult Model")
+  .action(selectModel);
 
 program
   .command("ask")
