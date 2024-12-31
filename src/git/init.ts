@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
-import fs from "fs";
-import path from "path";
 import { gitDiffForFile } from "./changes/diff.js";
 import { checkGitStatus } from "./changes/files.js";
 import { createGitCommit, hasPreferredModel } from "./commit.js";
@@ -45,26 +43,6 @@ export async function registerKey(model: Model) {
     gemini: registerGeminiAPIKey,
   };
   await registrations[model]();
-}
-
-async function checkGitLock(): Promise<boolean> {
-  const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
-  if (fs.existsSync(lockFilePath)) {
-    log.warn(
-      "Lock file detected: .git/index.lock. Git process might be running or was interrupted."
-    );
-    note("If you see a command error, try running `rm -f .git/index.lock`");
-    return true;
-  }
-  return false;
-}
-
-async function removeGitLock(): Promise<void> {
-  const lockFilePath = path.join(process.cwd(), ".git", "index.lock");
-  if (fs.existsSync(lockFilePath)) {
-    log.info("Removing .git/index.lock file.");
-    fs.unlinkSync(lockFilePath);
-  }
 }
 
 async function processGitChanges(files: string[]): Promise<void> {
