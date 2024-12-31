@@ -12,7 +12,9 @@
   },
   "files": [
     "dist",
-    "package.json"
+    "package.json",
+    "README.md",
+    "LICENSE.md"
   ],
   "bin": {
     "git-mind": "dist/index.js"

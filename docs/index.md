@@ -31,13 +31,3 @@ features:
     icon:
       src: /features/manage.svg
 ---
-
-<template>
-  <div>
-    <Tweet tweet-id="1873998985461195239" />
-  </div>
-</template>
-
-<script setup>
-import Tweet from 'vue-tweet';
-</script>
