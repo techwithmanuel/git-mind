@@ -71,10 +71,10 @@ git-mind --help
 
 This will show a summary of all available commands and how to use them.
 
-## Contributing
-
-Contributions are welcome! If you'd like to contribute to the project, please fork the repository, create a new branch, and submit a pull request with your changes.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](/LICENSE.md) file for details.
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to the project, please fork the repository, create a new branch, and submit a pull request with your changes.
