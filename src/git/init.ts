@@ -12,10 +12,11 @@ import { registerGeminiAPIKey } from "../models/gemini/manage.js";
 import { getGPTAPIKey } from "../models/gpt/get-key.js";
 import { registerGPTAPIKey } from "../models/gpt/manage.js";
 import { Model, selectModel } from "../models/select.js";
-import { intro, outro, log, note } from "@clack/prompts";
+import { intro, outro, log, note, cancel } from "@clack/prompts";
 import chalk from "chalk";
 import { terminalCommand } from "../utils/command/index.js";
 import { awaitingFnCall } from "../utils/sleep/index.js";
+import { trailingMessages } from "../utils/text.js";
 
 export async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
@@ -68,7 +69,7 @@ async function processGitChanges(files: string[]): Promise<void> {
     if (commitMessage) {
       note(commitMessage);
 
-      const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
+      const formattedCommitMessage = commitMessage.replace(/\n/g, ", ");
 
       terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
     }
@@ -77,7 +78,6 @@ async function processGitChanges(files: string[]): Promise<void> {
     const failures: Array<{ file: string; error: Error }> = [];
 
     try {
-      // Process files sequentially
       while (queue.length > 0) {
         const file = queue.shift()!;
 
@@ -104,8 +104,8 @@ async function processGitChanges(files: string[]): Promise<void> {
             );
             continue;
           } else {
-            const formattedCommitMessage = commitMessage.replace(/\n/g, " ");
-            note(formattedCommitMessage);
+            const formattedCommitMessage = commitMessage.replace(/\n/g, ", ");
+            log.message(trailingMessages(formattedCommitMessage));
 
             terminalCommand(`git commit -m "${formattedCommitMessage}"`);
             log.info(`Successfully committed changes for: ${file}`);
@@ -117,7 +117,9 @@ async function processGitChanges(files: string[]): Promise<void> {
           terminalCommand(`git reset "${file}"`);
         }
       }
-    } catch (err) {}
+    } catch (err) {
+      cancel("Failed to complete commit:" + err);
+    }
   }
 
   await pushToRemoteRepo();
