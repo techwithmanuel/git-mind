@@ -7,6 +7,7 @@ import { generateGeminiAnswer } from "../models/gemini/answer.js";
 import { generateGPTAnswer } from "../models/gpt/answer.js";
 import { generateClaudeAnswer } from "../models/claude/answer.js";
 import chalk from "chalk";
+import { awaitingFnCall } from "../utils/sleep/index.js";
 
 async function queryModel(model: Model) {
   intro(chalk.gray("Ask your AI Git related questions 🔎"));
@@ -26,16 +27,22 @@ async function queryModel(model: Model) {
 
   switch (model) {
     case "claude":
-      answer = await generateClaudeAnswer(String(question));
+      answer = await awaitingFnCall(() =>
+        generateClaudeAnswer(String(question))
+      );
       break;
     case "gemini":
-      answer = await generateGeminiAnswer(String(question));
+      answer = await awaitingFnCall<string | undefined>(() =>
+        generateGeminiAnswer(String(question))
+      );
       break;
     case "gpt":
-      answer = await generateGPTAnswer(String(question));
+      answer = await awaitingFnCall<string | undefined>(() =>
+        generateGPTAnswer(String(question))
+      );
       break;
     default:
-      symbolResponseError(`Model ${model} is not recognized`);
+      cancel(`Model ${model} is not recognized`);
       return;
   }
 
