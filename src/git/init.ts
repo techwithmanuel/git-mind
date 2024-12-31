@@ -121,6 +121,7 @@ async function processGitChanges(files: string[]): Promise<void> {
     }
   }
 
+  terminalCommand("rm -f .git/index.lock");
   await pushToRemoteRepo();
 }
 
