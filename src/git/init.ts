@@ -76,54 +76,47 @@ async function processGitChanges(files: string[]): Promise<void> {
       terminalCommand(`git commit -m  "${formattedCommitMessage}"`);
     }
   } else {
-    const queue = files.slice();
     const failures: Array<{ file: string; error: Error }> = [];
 
-    try {
-      while (queue.length > 0) {
-        const file = queue.shift()!;
+    for (const file of files) {
+      try {
+        log.info(`Staging file: ${file}`);
 
-        try {
-          log.info(`Staging file: ${file}`);
+        terminalCommand(`git add "${file}"`);
 
-          terminalCommand(`git add "${file}"`);
+        const diff = gitDiffForFile(file);
 
-          const diff = gitDiffForFile(file);
-
-          if (!diff) {
-            log.info(`No changes detected for file: ${file}`);
-            continue;
-          }
-
-          const commitMessage = await awaitingFnCall<string | undefined>(
-            () => createGitCommit(diff),
-            `Generated commit message from ${file}`
-          );
-
-          if (!commitMessage) {
-            log.warn(
-              `No commit message generated for file: ${file}, skipping commit`
-            );
-            continue;
-          } else {
-            const formattedCommitMessage = commitMessage
-              .replace(/\n/g, " ")
-              .replace(/"/g, "'");
-
-            note(trailingMessages(formattedCommitMessage));
-
-            terminalCommand(`git commit -m "${formattedCommitMessage}"`);
-            log.info(`Successfully committed changes for: ${file}`);
-          }
-        } catch (error) {
-          failures.push({ file, error: error as Error });
-          log.error(`Failed to process file: ${file}` + error);
-
-          terminalCommand(`git reset "${file}"`);
+        if (!diff) {
+          log.info(`No changes detected for file: ${file}`);
+          continue;
         }
+
+        const commitMessage = await awaitingFnCall<string | undefined>(
+          () => createGitCommit(diff),
+          `Generated commit message from ${file}`
+        );
+
+        if (!commitMessage) {
+          log.warn(
+            `No commit message generated for file: ${file}, skipping commit`
+          );
+          continue;
+        } else {
+          const formattedCommitMessage = commitMessage
+            .replace(/\n/g, " ")
+            .replace(/"/g, "'");
+
+          note(trailingMessages(formattedCommitMessage));
+
+          terminalCommand(`git commit -m "${formattedCommitMessage}"`);
+          log.info(`Successfully committed changes for: ${file}`);
+        }
+      } catch (error) {
+        failures.push({ file, error: error as Error });
+        log.error(`Failed to process file: ${file}` + error);
+
+        terminalCommand(`git reset "${file}"`);
       }
-    } catch (err) {
-      cancel("Failed to complete commit:" + err);
     }
   }
 
