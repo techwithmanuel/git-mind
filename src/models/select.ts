@@ -42,7 +42,7 @@ export async function selectModel() {
     fs.writeFileSync(preferencesFilePath, String(selectedDefault));
     cancel(
       chalk.green(
-        `Preference Saved, run 'lint-commit manage-${selectedDefault}' to manage your model`
+        `Preference Saved, run 'git-mind manage-${selectedDefault}' to manage your model`
       )
     );
   } else {
