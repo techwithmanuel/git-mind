@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 process.noDeprecation = true;
 
-import { gitDiffForFile } from "./changes/diff.js";
 import { checkGitStatus } from "./changes/files.js";
-import { createGitCommit, hasPreferredModel } from "./commit.js";
+import { hasPreferredModel } from "./commit.js";
 import { verifyRemoteRepo } from "./remote.js";
 import { getClaudeAPIKey } from "../models/claude/get-key.js";
 import { registerClaudeAPIKey } from "../models/claude/manage.js";
@@ -14,9 +13,7 @@ import { registerGPTAPIKey } from "../models/gpt/manage.js";
 import { Model, selectModel } from "../models/select.js";
 import { intro, outro, log, note } from "@clack/prompts";
 import chalk from "chalk";
-import { terminalCommand } from "../utils/command/index.js";
-import { awaitingFnCall } from "../utils/sleep/index.js";
-import { trailingMessages } from "../utils/text.js";
+import { processGitChanges } from "./process.js";
 
 export async function validateAPIKey(model: Model): Promise<boolean> {
   let key;
@@ -43,83 +40,6 @@ export async function registerKey(model: Model) {
     gemini: registerGeminiAPIKey,
   };
   await registrations[model]();
-}
-
-async function processGitChanges(files: string[]): Promise<void> {
-  const file_names = files.join(", ");
-
-  log.info(chalk.gray(`Changed Files: ${file_names}`));
-
-  if (files.length >= 5) {
-    log.info("More than 5 files, running git add .");
-    terminalCommand("git add .");
-
-    const diffs = files.slice(0, 2).map((file: string) => {
-      const diff = gitDiffForFile(file);
-      return diff ? diff : "";
-    });
-
-    const combinedDiff = diffs.join("\n");
-
-    const commitMessage = await awaitingFnCall<string | undefined>(
-      () => createGitCommit(combinedDiff),
-      `Generated commit messages for ${file_names}`
-    );
-
-    if (commitMessage) {
-      note(trailingMessages(commitMessage));
-
-      const formattedCommitMessage = commitMessage
-        .replace(/\n/g, " ")
-        .replace(/"/g, "'");
-
-      terminalCommand(`git commit -m "${formattedCommitMessage}"; git push `);
-    }
-  } else {
-    const failures: Array<{ file: string; error: Error }> = [];
-
-    for (const file of files) {
-      try {
-        log.info(`Staging file: ${file}`);
-        terminalCommand(`git add "${file}"`);
-
-        const diff = gitDiffForFile(file);
-
-        if (!diff) {
-          log.info(`No changes detected for file: ${file}`);
-          continue;
-        }
-
-        const commitMessage = await awaitingFnCall<string | undefined>(
-          () => createGitCommit(diff),
-          `Generated commit message from ${file}`
-        );
-
-        if (!commitMessage) {
-          log.warn(
-            `No commit message generated for file: ${file}, skipping commit`
-          );
-          continue;
-        } else {
-          const formattedCommitMessage = commitMessage
-            .replace(/\n/g, " ")
-            .replace(/"/g, "'");
-
-          note(trailingMessages(formattedCommitMessage));
-
-          terminalCommand(
-            `git commit -m "${formattedCommitMessage}"; git push`
-          );
-          log.info(`Successfully pushed and committed changes for: ${file}`);
-        }
-      } catch (error) {
-        failures.push({ file, error: error as Error });
-        log.error(`Failed to process file: ${file}` + error);
-
-        terminalCommand(`git reset "${file}"`);
-      }
-    }
-  }
 }
 
 export async function initGitCommit() {
