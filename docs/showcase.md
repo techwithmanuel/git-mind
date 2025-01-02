@@ -4,7 +4,7 @@
 
 <script setup>
 import VideoPlayerOne from './.vitepress/components/showcase-demo-one.vue';
-import VideoPlayerTwo from './.vitepress/components/showcase-demo-one.vue';
+import VideoPlayerTwo from './.vitepress/components/showcase-demo-two.vue';
 </script>
 
 <VideoPlayerTwo />
