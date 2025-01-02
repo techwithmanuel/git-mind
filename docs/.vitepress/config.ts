@@ -27,6 +27,7 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "Guide", link: "/guide" },
+      { text: "Showcase", link: "/showcase" },
       { text: "Changelog", link: "/changelog" },
       { text: "License", link: "/license" },
     ],
@@ -42,6 +43,7 @@ export default defineConfig({
         items: [
           { text: "Introduction", link: "/guide/" },
           { text: "Quick Start", link: "/guide/quick-start" },
+          { text: "Demo", link: "/showcase.md" },
         ],
       },
       {
