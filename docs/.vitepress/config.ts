@@ -34,7 +34,7 @@ export default defineConfig({
 
     footer: {
       message: "Released under the MIT License.",
-      copyright: `Copyright © ${new Date().getFullYear()}`,
+      copyright: `Copyright © ${new Date().getFullYear()} Emmanuel Alozie`,
     },
 
     sidebar: [
