@@ -2,7 +2,7 @@
 
 Follow these steps to get started with git-mind:
 
-### 1. Install git-mind
+### Installation
 
 ```bash
 # Locally installed
@@ -12,7 +12,7 @@ npm install -g git-mind
 npx git-mind@latest <command>
 ```
 
-### 2. Initialize a Git Commit / Commit your changes
+### Initialize a Git Commit / Commit your changes
 
 Use the init command to generate a commit message for your changes:
 
@@ -24,7 +24,7 @@ git-mind init
 npx git-mind@latest init
 ```
 
-### 3. Manage API Keys
+### Manage API Keys
 
 Set up API keys for the AI models you want to use:
 
@@ -48,7 +48,7 @@ git-mind manage-gpt
 npx git-mind@latest manage-gpt
 ```
 
-### 4. Select a Default Model
+### Select a Default Model
 
 Choose the AI model you want to use by default:
 
@@ -60,7 +60,7 @@ git-mind select-default
 npx git-mind@latest select-default
 ```
 
-### 5. Ask AI for Help
+### Ask AI for Help
 
 If you’re stuck with a git-related question, ask the AI directly:
 

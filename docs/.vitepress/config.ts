@@ -28,7 +28,13 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Guide", link: "/guide" },
       { text: "Changelog", link: "/changelog" },
+      { text: "License", link: "/license" },
     ],
+
+    footer: {
+      message: "Released under the MIT License.",
+      copyright: `Copyright © ${new Date().getFullYear()}`,
+    },
 
     sidebar: [
       {

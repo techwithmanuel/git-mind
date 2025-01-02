@@ -14,7 +14,7 @@ npx git-mind@latest ask "<your-question>"
 
 ## Guidelines
 
-1. Keep it Git-Related: Ensure your questions are strictly about git commands or workflows. Examples include:
+1. **Keep it Git-Related**: Ensure your questions are strictly about git commands or workflows. Examples include:
 
 - "How do I create a new branch?"
 
@@ -22,13 +22,13 @@ npx git-mind@latest ask "<your-question>"
 
 - "How do I resolve merge conflicts?"
 
-2. Be Specific: Provide as much context as possible to get accurate and helpful responses.
+2. **Be Specific**: Provide as much context as possible to get accurate and helpful responses.
 
-3. AI Model Responses: The AI models are prompted to provide git-specific answers. If a question isn’t git-related, the response will be:
+3. **AI Model Responses**: The AI models are prompted to provide git-specific answers. If a question isn’t git-related, the response will be:
 
 - "Unable to process that."
 
-4. Example Questions
+4. **Example Questions**
 
 - "How do I squash commits?"
 
