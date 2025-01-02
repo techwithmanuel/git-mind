@@ -7,3 +7,4 @@ All notable changes to this project `git-mind` will be documented here.
 ### Fixed
 
 - Fixed a bug where deleted files could not be committed.
+- Addressed .gitlock file error
