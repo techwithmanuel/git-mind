@@ -26,7 +26,11 @@ export async function generateClaudeCommit(input: string) {
         model: "claude-3-opus-20240229",
       });
 
-      const text = result.content[0].type;
+      const text = result.content
+        .filter((block) => block.type === "text")
+        .map((block) => block.text)
+        .join(", ");
+
       return text;
     } catch (error) {
       exec("git reset");
