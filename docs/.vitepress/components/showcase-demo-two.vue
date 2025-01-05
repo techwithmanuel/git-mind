@@ -1,7 +1,7 @@
 <template>
   <div class="video-container">
     <video controls>
-      <source src="/demo-2.mp4" type="video/mp4" />
+      <source src="/demo-2.mov" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
   </div>
