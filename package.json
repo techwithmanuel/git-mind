@@ -1,6 +1,6 @@
 {
   "name": "git-mind",
-  "version": "0.0.15",
+  "version": "0.0.151",
   "main": "index.js",
   "type": "module",
   "scripts": {

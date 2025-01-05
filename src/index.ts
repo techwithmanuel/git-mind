@@ -16,7 +16,7 @@ program
   .description(
     "A CLI tool that generates intelligent git commit messages using AI, with support for Gemini, ChatGPT, and Claude AI."
   )
-  .version("0.0.1");
+  .version("0.0.151");
 
 program
   .command("init")
